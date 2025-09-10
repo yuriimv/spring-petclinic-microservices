@@ -1,0 +1,6 @@
+metric_name,value
+post_test_jvm_memory_bytes,93120336
+post_test_http_requests_count,75
+post_test_cpu_usage,0.08813351485010792
+p95_response_time_seconds,
+p99_response_time_seconds,

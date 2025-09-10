@@ -47,10 +47,10 @@ public class AIDataProvider {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String vetAsJson = objectMapper.writeValueAsString(request.vet());
 
-		SearchRequest sr = SearchRequest.from(SearchRequest.defaults()).withQuery(vetAsJson).withTopK(20);
+		SearchRequest sr = SearchRequest.builder().query(vetAsJson).topK(20).build();
 		if (request.vet() == null) {
 			// Provide a limit of 50 results when zero parameters are sent
-			sr = sr.withTopK(50);
+			sr = SearchRequest.builder().query(vetAsJson).topK(50).build();
 		}
 
 		List<Document> topMatches = this.vectorStore.similaritySearch(sr);
