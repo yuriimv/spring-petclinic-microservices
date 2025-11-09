@@ -7,6 +7,15 @@ spring:
     active: production
   config:
     import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888/},optional:classpath:/creds.yaml
+
+# Zipkin tracing configuration - Spring Boot 3.5 uses ZipkinHttpClientSender by default
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_URL:http://localhost:9411/api/v2/spans}
   ai:
     chat:
       client:

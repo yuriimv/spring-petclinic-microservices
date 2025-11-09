@@ -4,6 +4,20 @@ spring:
   config:
     import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888/}
 
+# Zipkin tracing configuration - Spring Boot 3.5 uses ZipkinHttpClientSender by default
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_URL:http://localhost:9411/api/v2/spans}
+
+server:
+  tomcat:
+    # Maintain previous Spring Boot 3.4 behavior (default changed from 'when-available' to 'never' in 3.5)
+    use-apr: when-available
+
 
 ---
 spring:
@@ -11,3 +25,23 @@ spring:
     activate:
       on-profile: docker
     import: configserver:http://config-server:8888
+
+---
+spring:
+  config:
+    activate:
+      on-profile: postgresql
+  datasource:
+    url: jdbc:postgresql://localhost:5432/petclinic
+    username: petclinic
+    password: petclinic
+    driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      schema-locations: classpath*:db/postgresql/schema.sql
+      data-locations: classpath*:db/postgresql/data.sql
+      mode: always
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.PostgreSQLDialect

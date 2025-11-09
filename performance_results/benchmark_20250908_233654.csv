@@ -1,0 +1,37 @@
+test_name,endpoint,requests,duration_seconds,requests_per_second,avg_response_time_ms
+load_test_50,/api/customer/owners,50,[1;33mℹ Running load test: 50 requests to http://localhost:8080/api/customer/owners with 10 concurrent connections[0m
+1.832302000,[1;33mℹ Running load test: 50 requests to http://localhost:8080/api/customer/owners with 10 concurrent connections[0m
+27.28,
+load_test_100,/api/customer/owners,100,[1;33mℹ Running load test: 100 requests to http://localhost:8080/api/customer/owners with 10 concurrent connections[0m
+.978867000,[1;33mℹ Running load test: 100 requests to http://localhost:8080/api/customer/owners with 10 concurrent connections[0m
+102.15,
+load_test_200,/api/customer/owners,200,[1;33mℹ Running load test: 200 requests to http://localhost:8080/api/customer/owners with 10 concurrent connections[0m
+1.216375000,[1;33mℹ Running load test: 200 requests to http://localhost:8080/api/customer/owners with 10 concurrent connections[0m
+164.42,
+load_test_50,/api/vet/vets,50,[1;33mℹ Running load test: 50 requests to http://localhost:8080/api/vet/vets with 10 concurrent connections[0m
+.684094000,[1;33mℹ Running load test: 50 requests to http://localhost:8080/api/vet/vets with 10 concurrent connections[0m
+73.08,
+load_test_100,/api/vet/vets,100,[1;33mℹ Running load test: 100 requests to http://localhost:8080/api/vet/vets with 10 concurrent connections[0m
+1.180461000,[1;33mℹ Running load test: 100 requests to http://localhost:8080/api/vet/vets with 10 concurrent connections[0m
+84.71,
+load_test_200,/api/vet/vets,200,[1;33mℹ Running load test: 200 requests to http://localhost:8080/api/vet/vets with 10 concurrent connections[0m
+1.214016000,[1;33mℹ Running load test: 200 requests to http://localhost:8080/api/vet/vets with 10 concurrent connections[0m
+164.74,
+load_test_50,/api/visit/owners/1/pets/1/visits,50,[1;33mℹ Running load test: 50 requests to http://localhost:8080/api/visit/owners/1/pets/1/visits with 10 concurrent connections[0m
+.589768000,[1;33mℹ Running load test: 50 requests to http://localhost:8080/api/visit/owners/1/pets/1/visits with 10 concurrent connections[0m
+84.77,
+load_test_100,/api/visit/owners/1/pets/1/visits,100,[1;33mℹ Running load test: 100 requests to http://localhost:8080/api/visit/owners/1/pets/1/visits with 10 concurrent connections[0m
+2.299019000,[1;33mℹ Running load test: 100 requests to http://localhost:8080/api/visit/owners/1/pets/1/visits with 10 concurrent connections[0m
+43.49,
+load_test_200,/api/visit/owners/1/pets/1/visits,200,[1;33mℹ Running load test: 200 requests to http://localhost:8080/api/visit/owners/1/pets/1/visits with 10 concurrent connections[0m
+1.168717000,[1;33mℹ Running load test: 200 requests to http://localhost:8080/api/visit/owners/1/pets/1/visits with 10 concurrent connections[0m
+171.12,
+load_test_50,/,50,[1;33mℹ Running load test: 50 requests to http://localhost:8080/ with 10 concurrent connections[0m
+1.375755000,[1;33mℹ Running load test: 50 requests to http://localhost:8080/ with 10 concurrent connections[0m
+36.34,
+load_test_100,/,100,[1;33mℹ Running load test: 100 requests to http://localhost:8080/ with 10 concurrent connections[0m
+.786161000,[1;33mℹ Running load test: 100 requests to http://localhost:8080/ with 10 concurrent connections[0m
+127.20,
+load_test_200,/,200,[1;33mℹ Running load test: 200 requests to http://localhost:8080/ with 10 concurrent connections[0m
+1.161011000,[1;33mℹ Running load test: 200 requests to http://localhost:8080/ with 10 concurrent connections[0m
+172.26,

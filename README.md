@@ -11,6 +11,51 @@ and the Eureka Service Discovery from the [Spring Cloud Netflix](https://github.
 
 [![Open in Codeanywhere](https://codeanywhere.com/img/open-in-codeanywhere-btn.svg)](https://app.codeanywhere.com/#https://github.com/spring-petclinic/spring-petclinic-microservices)
 
+## Spring Boot 3.5 Migration Notes
+
+This application has been successfully upgraded to **Spring Boot 3.5.5** and **Spring Cloud 2025.0.0**. Key changes made during the migration:
+
+### Version Updates
+- **Spring Boot**: Upgraded from 3.4.1 to 3.5.5
+- **Spring Cloud**: Upgraded to 2025.0.0 for compatibility with Spring Boot 3.5.5
+- **Spring AI**: Updated to latest compatible version for enhanced GenAI service functionality
+
+### Configuration Changes
+
+#### Tomcat APR Configuration
+- **Change**: Spring Boot 3.5 changed the default value of `server.tomcat.use-apr` from `when-available` to `never`
+- **Action**: Explicitly configured `server.tomcat.use-apr: when-available` in all Tomcat-based services to maintain previous behavior
+- **Affected Services**: customers-service, vets-service, visits-service, admin-server, config-server, discovery-server
+- **Note**: API Gateway and GenAI service use Netty (reactive) and are not affected
+
+#### Enhanced Error Handling
+- **Feature**: Spring Boot 3.5 now includes `MethodValidationResult` errors in `ErrorAttributes` automatically
+- **Benefit**: Improved validation error reporting with better JSON serialization
+- **Impact**: No code changes required - enhancement works automatically
+
+#### PostgreSQL Docker Integration
+- **Enhancement**: Automatic `application_name` configuration using `spring.application.name` property
+- **Benefit**: Better database connection identification in PostgreSQL logs
+- **Configuration**: Ensure `spring.application.name` is properly set in all services (already configured)
+
+#### Zipkin Tracing Updates
+- **Change**: Default sender updated from `URLConnectionSender` to `ZipkinHttpClientSender`
+- **Benefit**: Improved performance and reliability for distributed tracing
+- **Impact**: Automatic improvement - no configuration changes needed
+
+### New Features Available
+- **@ConditionalOnBooleanProperty**: New annotation for conditional bean creation based on boolean properties
+- **Enhanced GraphQL Support**: Updated transport-specific configuration properties structure
+- **Improved Monitoring**: Better integration with Prometheus and Grafana dashboards
+
+## System Requirements
+
+- **Java**: JDK 17 or later
+- **Maven**: 3.6.3 or later (or use the included Maven wrapper `./mvnw`)
+- **Docker**: For containerized deployment (optional)
+- **Memory**: At least 4GB RAM recommended for running all services
+- **Ports**: Ensure ports 8080, 8761, 8888, 9090, 9091, 9411, 3000 are available
+
 ## Starting services locally without Docker
 
 Every microservice is a Spring Boot application and can be started locally using IDE or `../mvnw spring-boot:run` command.
