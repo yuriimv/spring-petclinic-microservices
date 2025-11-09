@@ -143,7 +143,7 @@ jobs:
         run: ./mvnw -B clean install -P buildDocker --file pom.xml
 
       - name: Start services with Docker Compose
-        run: docker-compose up -d config-server discovery-server customers-service visits-service vets-service api-gateway admin-server
+        run: docker compose up -d config-server discovery-server customers-service visits-service vets-service api-gateway admin-server
         env:
           OPENAI_API_KEY: "test-key"
 
@@ -172,11 +172,11 @@ jobs:
 
       - name: Show service logs on failure
         if: failure()
-        run: docker-compose logs
+        run: docker compose logs
 
       - name: Stop services
         if: always()
-        run: docker-compose down -v
+        run: docker compose down -v
 
   security-scan:
     name: Security Scan
