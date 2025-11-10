@@ -4,25 +4,35 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
-import org.springframework.boot.web.reactive.error.ErrorAttributes;
-import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.api.application.CustomersServiceClient;
 import org.springframework.samples.petclinic.api.application.VisitsServiceClient;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ServerWebExchange;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.constraints.Min;
+
+import java.time.Instant;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,8 +40,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Test class to verify Spring Boot 3.5 enhanced error handling works in the API Gateway.
  * Tests that method validation errors are properly handled and serialized in the gateway layer.
  */
-@WebFluxTest({ApiGatewayController.class, ApiGatewayMethodValidationTest.TestValidationController.class})
-@Import(ApiGatewayMethodValidationTest.TestConfig.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureWebTestClient
+@Import({ApiGatewayMethodValidationTest.TestValidationController.class, ApiGatewayMethodValidationTest.ValidationExceptionHandler.class})
 class ApiGatewayMethodValidationTest {
 
     @Autowired
@@ -46,17 +57,6 @@ class ApiGatewayMethodValidationTest {
     @MockBean
     private VisitsServiceClient visitsServiceClient;
 
-    @MockBean
-    private ReactiveCircuitBreakerFactory circuitBreakerFactory;
-
-    @TestConfiguration
-    static class TestConfig {
-        @Bean
-        public ErrorAttributes errorAttributes() {
-            return new DefaultErrorAttributes();
-        }
-    }
-
     /**
      * Test controller to simulate method validation in API Gateway context
      */
@@ -66,8 +66,36 @@ class ApiGatewayMethodValidationTest {
     static class TestValidationController {
 
         @GetMapping("/owner/{ownerId}")
-        public String getOwnerValidation(@PathVariable @Min(value = 1, message = "Owner ID must be positive in gateway") int ownerId) {
+        public String getOwnerValidation(@PathVariable @Min(value = 1, message = "Owner ID must be positive in gateway") Integer ownerId) {
             return "Gateway validation passed for owner: " + ownerId;
+        }
+    }
+
+    /**
+     * Exception handler for method validation errors in WebFlux
+     */
+    @RestControllerAdvice
+    static class ValidationExceptionHandler {
+
+        @ExceptionHandler(ConstraintViolationException.class)
+        public ResponseEntity<Map<String, Object>> handleConstraintViolationException(
+                ConstraintViolationException ex, ServerWebExchange exchange) {
+
+            Map<String, Object> errorResponse = new LinkedHashMap<>();
+            errorResponse.put("timestamp", Instant.now().toString());
+            errorResponse.put("path", exchange.getRequest().getPath().value());
+            errorResponse.put("status", 400);
+            errorResponse.put("error", "Bad Request");
+
+            // Combine all constraint violation messages
+            String message = ex.getConstraintViolations().stream()
+                    .map(ConstraintViolation::getMessage)
+                    .collect(Collectors.joining(", "));
+            errorResponse.put("message", message);
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(errorResponse);
         }
     }
 
