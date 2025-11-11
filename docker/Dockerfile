@@ -8,6 +8,10 @@ RUN java -Djarmode=layertools -jar application.jar extract
 FROM eclipse-temurin:25
 WORKDIR application
 
+# Install curl for healthchecks
+USER root
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 ARG EXPOSED_PORT
 EXPOSE ${EXPOSED_PORT}
 

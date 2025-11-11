@@ -6,15 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.api.application.CustomersServiceClient;
 import org.springframework.samples.petclinic.api.application.VisitsServiceClient;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -51,10 +49,10 @@ class ApiGatewayMethodValidationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private CustomersServiceClient customersServiceClient;
 
-    @MockBean
+    @MockitoBean
     private VisitsServiceClient visitsServiceClient;
 
     /**
@@ -152,23 +150,23 @@ class ApiGatewayMethodValidationTest {
                 .expectBody(String.class)
                 .returnResult()
                 .getResponseBody();
-        
+
         // Verify that the response is valid JSON
         JsonNode errorResponse = objectMapper.readTree(responseBody);
         assertThat(errorResponse).isNotNull();
-        
+
         // Verify JSON structure and content safety
         assertThat(errorResponse.get("timestamp").isTextual()).isTrue();
         assertThat(errorResponse.get("status").isNumber()).isTrue();
         assertThat(errorResponse.get("error").isTextual()).isTrue();
         assertThat(errorResponse.get("message").isTextual()).isTrue();
         assertThat(errorResponse.get("path").isTextual()).isTrue();
-        
+
         // Verify no serialization artifacts
         assertThat(responseBody).doesNotContain("@");
         assertThat(responseBody).doesNotContain("class");
         assertThat(responseBody).doesNotContain("hashCode");
-        
+
         // Verify the error message contains validation information
         String message = errorResponse.get("message").asText();
         assertThat(message).isNotEmpty();
